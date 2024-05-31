@@ -25,12 +25,12 @@ class MainActivity : AppCompatActivity() {
 
     private val TAG = "Lorem"
 
-    var btnCalcular = findViewById<Button>(R.id.btnCalcular)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
+        var btnCalcular = findViewById<Button>(R.id.btnCalcular)
 
         Log.v(TAG, "log de verbose")
         Log.d(TAG, "log de verbose")
