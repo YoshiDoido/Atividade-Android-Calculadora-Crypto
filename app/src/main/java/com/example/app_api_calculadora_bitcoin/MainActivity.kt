@@ -19,9 +19,13 @@ import java.text.NumberFormat
 
 class MainActivity : AppCompatActivity() {
 
-    val API_URL = "https://www.mercadobitcoin.net/api/BTC/ticker/"
+    val API_URL_BITCOIN = "https://www.mercadobitcoin.net/api/BTC/ticker/"
+    val API_URL_ETHERUM = "https://www.mercadobitcoin.net/api/ETH/ticker/"
+    val API_URL_DOGECOIN = "https://www.mercadobitcoin.net/api/DOGE/ticker/"
 
     var cotacaoBitcoin: Double = 0.0
+    var cotacaoEtherum: Double = 0.0
+    var cotacaoDogecoin: Double = 0.0
 
     private val TAG = "Lorem"
 
@@ -30,7 +34,12 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        var btnCalcular = findViewById<Button>(R.id.btnCalcular)
+        val btnCalcular = findViewById<Button>(R.id.btnCalcular)
+        val txtValor = findViewById<EditText>(R.id.txtValor)
+        val txtQtdBitcoins = findViewById<TextView>(R.id.txtQtdBitcoins)
+        val txtQtdEtherum = findViewById<TextView>(R.id.txtQtdEtheruns)
+        val txtQtdDogecoin = findViewById<TextView>(R.id.txtQtdDogecoins)
+
 
         Log.v(TAG, "log de verbose")
         Log.d(TAG, "log de verbose")
@@ -40,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
         buscarCotacao()
         btnCalcular.setOnClickListener {
-            calcular()
+            calcular(txtValor, txtQtdBitcoins, txtQtdEtherum, txtQtdDogecoin)
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -52,13 +61,25 @@ class MainActivity : AppCompatActivity() {
 
     fun buscarCotacao() {
         GlobalScope.async(Dispatchers.Default) {
-            val resposta = URL(API_URL).readText()
-            cotacaoBitcoin = JSONObject(resposta).getJSONObject("ticker").getDouble("last")
+            // Bitcoin
+            val respostaBitcoin = URL(API_URL_BITCOIN).readText()
+            cotacaoBitcoin = JSONObject(respostaBitcoin).getJSONObject("ticker").getDouble("last")
+
+            // Etherum
+            val respostaEtherum = URL(API_URL_ETHERUM).readText()
+            cotacaoEtherum = JSONObject(respostaEtherum).getJSONObject("ticker").getDouble("last")
+
+            // Dogecoin
+            val respostaDogecoin = URL(API_URL_DOGECOIN).readText()
+            cotacaoDogecoin = JSONObject(respostaDogecoin).getJSONObject("ticker").getDouble("last")
 
             val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
-            val cotacaoFormatada = f.format(cotacaoBitcoin)
+            val cotacaoFormatadaBitcoin = f.format(cotacaoBitcoin)
+            val cotacaoFormatadaEtherum = f.format(cotacaoEtherum)
+            val cotacaoFormatadaDogecoin = f.format(cotacaoDogecoin)
+
             var txtCotacao = findViewById<TextView>(R.id.txtCotacao)
-            txtCotacao.setText("$cotacaoFormatada")
+            txtCotacao.setText("$cotacaoFormatadaBitcoin, $cotacaoFormatadaEtherum, $cotacaoFormatadaDogecoin")
 
             withContext(Main) {
 
@@ -66,10 +87,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun calcular() {
-
-        var txtValor = findViewById<EditText>(R.id.txtValor)
-
+    fun calcular(txtValor: EditText, txtQtdBitcoins: TextView, txtQtdEtherum: TextView, txtQtdDogecoin: TextView) {
         if (txtValor.text.isEmpty()) {
             txtValor.error = "Preencha um valor"
             return
@@ -77,10 +95,12 @@ class MainActivity : AppCompatActivity() {
 
         val valorDigitado = txtValor.text.toString().replace(",", ".").toDouble()
 
-        val resultado = if (cotacaoBitcoin > 0) valorDigitado / cotacaoBitcoin else 0.0
+        val resultadoBitcoin = if (cotacaoBitcoin > 0) valorDigitado / cotacaoBitcoin else 0.0
+        val resultadoEtherum = if (cotacaoEtherum > 0) valorDigitado / cotacaoEtherum else 0.0
+        val resultadoDogecoin = if (cotacaoDogecoin > 0) valorDigitado / cotacaoDogecoin else 0.0
 
-        var txtQtdBitcoins = findViewById<TextView>(R.id.txtQtdBitcoins)
-
-        txtQtdBitcoins.text = "%.8f".format(resultado)
+        txtQtdBitcoins.text = "%.8f".format(resultadoBitcoin)
+        txtQtdEtherum.text = "%.8f".format(resultadoEtherum)
+        txtQtdDogecoin.text = "%.8f".format(resultadoDogecoin)
     }
 }

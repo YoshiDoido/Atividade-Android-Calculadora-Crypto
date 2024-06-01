@@ -15,6 +15,10 @@
 
     <include layout="@layout/bloco_entrada" />
 
-    <include layout="@layout/bloco_saida" />
+    <include layout="@layout/bloco_saida_btc" />
+
+    <include layout="@layout/bloco_saida_eth" />
+
+    <include layout="@layout/bloco_saida_doge" />
 
 </LinearLayout>
