@@ -22,10 +22,12 @@ class MainActivity : AppCompatActivity() {
     val API_URL_BITCOIN = "https://www.mercadobitcoin.net/api/BTC/ticker/"
     val API_URL_ETHERUM = "https://www.mercadobitcoin.net/api/ETH/ticker/"
     val API_URL_DOGECOIN = "https://www.mercadobitcoin.net/api/DOGE/ticker/"
+    val API_URL_LITECOIN = "https://www.mercadobitcoin.net/api/LTC/ticker/"
 
     var cotacaoBitcoin: Double = 0.0
     var cotacaoEtherum: Double = 0.0
     var cotacaoDogecoin: Double = 0.0
+    var cotacaoLitecoin: Double = 0.0
 
     private val TAG = "Lorem"
 
@@ -39,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         val txtQtdBitcoins = findViewById<TextView>(R.id.txtQtdBitcoins)
         val txtQtdEtherum = findViewById<TextView>(R.id.txtQtdEtheruns)
         val txtQtdDogecoin = findViewById<TextView>(R.id.txtQtdDogecoins)
+        val txtQtdLitecoin = findViewById<TextView>(R.id.txtQtdLitecoins)
 
 
         Log.v(TAG, "log de verbose")
@@ -49,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         buscarCotacao()
         btnCalcular.setOnClickListener {
-            calcular(txtValor, txtQtdBitcoins, txtQtdEtherum, txtQtdDogecoin)
+            calcular(txtValor, txtQtdBitcoins, txtQtdEtherum, txtQtdDogecoin, txtQtdLitecoin)
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -73,13 +76,18 @@ class MainActivity : AppCompatActivity() {
             val respostaDogecoin = URL(API_URL_DOGECOIN).readText()
             cotacaoDogecoin = JSONObject(respostaDogecoin).getJSONObject("ticker").getDouble("last")
 
+            // Litecoin
+            val respostaLitecoin = URL(API_URL_LITECOIN).readText()
+            cotacaoLitecoin = JSONObject(respostaLitecoin).getJSONObject("ticker").getDouble("last")
+
             val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
             val cotacaoFormatadaBitcoin = f.format(cotacaoBitcoin)
             val cotacaoFormatadaEtherum = f.format(cotacaoEtherum)
             val cotacaoFormatadaDogecoin = f.format(cotacaoDogecoin)
+            val cotacaoFormatadaLitecoin = f.format(cotacaoLitecoin)
 
             var txtCotacao = findViewById<TextView>(R.id.txtCotacao)
-            txtCotacao.setText("$cotacaoFormatadaBitcoin, $cotacaoFormatadaEtherum, $cotacaoFormatadaDogecoin")
+            txtCotacao.setText("$cotacaoFormatadaBitcoin, $cotacaoFormatadaEtherum, $cotacaoFormatadaDogecoin, $cotacaoFormatadaLitecoin")
 
             withContext(Main) {
 
@@ -87,7 +95,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun calcular(txtValor: EditText, txtQtdBitcoins: TextView, txtQtdEtherum: TextView, txtQtdDogecoin: TextView) {
+    fun calcular(txtValor: EditText, txtQtdBitcoins: TextView, txtQtdEtherum: TextView, txtQtdDogecoin: TextView, txtQtdLitecoin: TextView) {
         if (txtValor.text.isEmpty()) {
             txtValor.error = "Preencha um valor"
             return
@@ -98,9 +106,11 @@ class MainActivity : AppCompatActivity() {
         val resultadoBitcoin = if (cotacaoBitcoin > 0) valorDigitado / cotacaoBitcoin else 0.0
         val resultadoEtherum = if (cotacaoEtherum > 0) valorDigitado / cotacaoEtherum else 0.0
         val resultadoDogecoin = if (cotacaoDogecoin > 0) valorDigitado / cotacaoDogecoin else 0.0
+        val resultadoLitecoin = if (cotacaoLitecoin > 0) valorDigitado / cotacaoLitecoin else 0.0
 
         txtQtdBitcoins.text = "%.8f".format(resultadoBitcoin)
         txtQtdEtherum.text = "%.8f".format(resultadoEtherum)
         txtQtdDogecoin.text = "%.8f".format(resultadoDogecoin)
+        txtQtdLitecoin.text = "%.8f".format(resultadoLitecoin)
     }
 }

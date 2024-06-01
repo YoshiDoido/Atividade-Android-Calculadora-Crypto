@@ -21,4 +21,6 @@
 
     <include layout="@layout/bloco_saida_doge" />
 
+    <include layout="@layout/bloco_saida_ltc" />
+
 </LinearLayout>
